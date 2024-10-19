@@ -1,45 +1,45 @@
+// Simple Controller - Proof of concept
+
+
 loadAPI(2);
 
-// Remove this if you want to be able to use deprecated methods without causing script to stop.
-// This is useful during development.
+// Force updated usage
 host.setShouldFailOnDeprecatedUse(true);
 
-host.defineController("Dan W", "simple_controller", "0.1", "03684d0f-b167-4ebb-bbe8-478705f65b71", "Generic");
+host.defineController("Dan W",
+                      "simple_controller",
+                      "0.1",
+                      "03684d0f-b167-4ebb-bbe8-478705f65b71",
+                      "Generic");
 
+// One input for clip launch messages, one output for
+// sync ticks
 host.defineMidiPorts(1, 1);
 
+// Platform specific - currently using loopback
+// and haven't tested across platforms
 if (host.platformIsWindows())
 {
-   // TODO: Set the correct names of the ports for auto detection on Windows platform here
-   // and uncomment this when port names are correct.
-   // host.addDeviceNameBasedDiscoveryPair(["Input Port 0"], ["Output Port 0"]);
 }
 else if (host.platformIsMac())
 {
-   // TODO: Set the correct names of the ports for auto detection on Mac OSX platform here
-   // and uncomment this when port names are correct.
-   // host.addDeviceNameBasedDiscoveryPair(["Input Port 0"], ["Output Port 0"]);
 }
 else if (host.platformIsLinux())
 {
-   // TODO: Set the correct names of the ports for auto detection on Linux platform here
-   // and uncomment this when port names are correct.
-   // host.addDeviceNameBasedDiscoveryPair(["Input Port 0"], ["Output Port 0"]);
 }
 
+// Global for tracks
 var dwtracks;
+
 
 function init() {
     transport = host.createTransport();
     host.getMidiInPort(0).setMidiCallback(onMidi0);
     host.getMidiInPort(0).setSysexCallback(onSysex0);
    
-    //host.getMidiOutPort(0).setShouldSendMidiBeatClock(true); 
-
     dwtracks = host.createTrackBank(8, 5, 8)
 
-   // TODO: Perform further initialization here.
-   println("simple_controller initialized!");
+    println("simple_controller initialized!");
 }
 
 // Called when a short MIDI message is received on MIDI input port 0.
@@ -48,6 +48,7 @@ function onMidi0(status, data1, data2) {
         return;
     }
 
+    // Track and scene calculator
     track_nbr = Math.floor((data1-10) / 8)
     scene_nbr = (data1-10) % 8
     if ( track_nbr > 7 || scene_nbr > 7) {
@@ -55,7 +56,6 @@ function onMidi0(status, data1, data2) {
         return;
     }
     
-    //printMidi(status, data1, data2);
     println("Launching track " + track_nbr + " scene " + scene_nbr);
     
     dwtracks.getChannel(track_nbr).clipLauncherSlotBank().launch(scene_nbr);
