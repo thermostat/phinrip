@@ -62,7 +62,3 @@ while True:
 #     port.send(msg_on)
 #     time.sleep(1)
 #     port.send(msg_off)
-    
-
-
-

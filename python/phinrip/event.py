@@ -1,12 +1,17 @@
 #!/bin/env python3
 
 """
-Abstract event framework
+Abstract event framework -
 """
 from typing import List
-import heapq
+from heapq import heappush, heappop
 
 class Event:
+    """
+    Event 
+
+    
+    """
 
     def __init__(self, firetime=None, callback=None):
         self._firetime = firetime
@@ -29,6 +34,12 @@ class Event:
     def __repr__(self):
         return f"[t:{self._firetime:08}] Generic event @{hex(id(self))}"
 
+    def dict(self):
+        d = {
+            "firetime" : self.firetime(),
+            "description" : repr(self)
+            }
+        return d
     
 class DiscreteEventQueue:
 
@@ -41,14 +52,21 @@ class DiscreteEventQueue:
         self._current_time = self._current_time + n
         current_events = []
         while self._queue and (self._queue[0][0] <= self._current_time):
-            e_tick, event = heappop(self.queue)
+            e_tick, event = heappop(self._queue)
             current_events.append(event)
         self._process_events(current_events)
         for event in current_events:
             self._event_log.append(event)
 
+    def add(self, event):
+        event_item = (event.firetime(), event)
+        heappush(self._queue, event_item)
+            
     def current_time(self):
         return self._current_time
+
+    def event_log(self):
+        return self._event_log
 
     def _process_events(self, eventlist: List):
         for event in eventlist:
