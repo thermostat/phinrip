@@ -25,6 +25,9 @@ class Event:
         if self._callback and runcallback:
             self._callback(self)
 
+    def time_str(self):
+        return f"[t:{self._firetime:08}]"
+
     def _fire_event(self):
         """
         Override 
@@ -32,7 +35,7 @@ class Event:
         return True
 
     def __repr__(self):
-        return f"[t:{self._firetime:08}] Generic event @{hex(id(self))}"
+        return f"{self.time_str()} Generic event @{hex(id(self))}"
 
     def dict(self):
         d = {

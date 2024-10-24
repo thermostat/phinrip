@@ -18,7 +18,8 @@ class Clip:
         return ((self.track_nbr*SCENE_COUNT)+self.scene_nbr)+10
 
     def constructMidiMessage(self):
-        mido.Message('note_on', note=self._convertToNoteVal())
+        msg = mido.Message('note_on', note=self._convertToNoteVal())
+        return msg
 
     def __str__(self):
         return f"[Track {self.track_nbr}:Scene {self.scene_nbr}]"
@@ -33,6 +34,9 @@ class UpdateEvent(Event):
         # no callback
         return False
 
+    def __repr__(self):
+        return f"{self.time_str()} Update event"
+
 class LaunchClipEvent(Event):
     def __init__(self, parent, clip, firetime):
         super().__init__(firetime)
@@ -43,7 +47,7 @@ class LaunchClipEvent(Event):
         self._parent.sendClip(self._clip)
 
     def __repr__(self):
-        return f"Launched {self._clip} at {self.firetime()}"
+        return f"{self.time_str()} Launched {self._clip} at {self.firetime()}"
 
 
 
@@ -93,3 +97,6 @@ class ClipController:
         self._queue.add(UpdateEvent(self, 1))
         self._queue.run()
         # n is the number of updates
+
+    def event_log(self):
+        return self._queue.event_log()

@@ -49,5 +49,8 @@ class ExternalSyncQueue:
     def current_time(self):
         return self._queue.current_time()
 
+    def event_log(self):
+        return self._queue.event_log()
+
     def stop(self):
         self._keep_running = False
