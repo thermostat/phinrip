@@ -10,54 +10,7 @@ from typing import List, Optional
 
 from mido import Message, MetaMessage, MidiFile, MidiTrack, bpm2tempo
 
-
-class NoteName:
-    """Utility helpers for converting textual note names (C#4) into MIDI numbers."""
-
-    _NOTE_OFFSETS = {
-        "C": 0,
-        "D": 2,
-        "E": 4,
-        "F": 5,
-        "G": 7,
-        "A": 9,
-        "B": 11,
-    }
-
-    @classmethod
-    def to_midi(cls, name: str) -> int:
-        """
-        Convert a note name like ``C#4`` or ``Eb3`` into its MIDI note number.
-
-        Octaves follow the standard where C4 == MIDI 60.
-        """
-        if len(name) < 2:
-            raise ValueError(f"Invalid note name '{name}'.")
-        name = name.strip()
-        letter = name[0].upper()
-        if letter not in cls._NOTE_OFFSETS:
-            raise ValueError(f"Unknown note letter '{letter}' in '{name}'.")
-
-        accidental_idx = 1
-        offset_adjust = 0
-        if len(name) > 2 and name[1] in ("#", "b"):
-            accidental = name[1]
-            offset_adjust = 1 if accidental == "#" else -1
-            accidental_idx = 2
-        elif len(name) > 1 and name[1] in ("#", "b"):
-            accidental = name[1]
-            offset_adjust = 1 if accidental == "#" else -1
-            accidental_idx = 2
-
-        octave_str = name[accidental_idx:]
-        if not octave_str or not octave_str.lstrip("-").isdigit():
-            raise ValueError(f"Invalid octave in note name '{name}'.")
-        octave = int(octave_str)
-
-        midi_number = (octave + 1) * 12 + cls._NOTE_OFFSETS[letter] + offset_adjust
-        if not 0 <= midi_number <= 127:
-            raise ValueError(f"Note '{name}' resolves outside MIDI range 0-127.")
-        return midi_number
+from .note import Note
 
 
 class StepLength(Enum):
@@ -139,7 +92,10 @@ class StepSequenceFile:
         """Append a step (note or rest) to the backing sequence."""
         self._steps.append(event)
 
-    def add_note(self, note: int, velocity: int = 96, channel: int = 0) -> None:
+    def add_note(self, note: Note) -> None:
+        self.add_step(StepEvent.note(note.pitch_value(), velocity=note.velocity()))
+
+    def add_note_value(self, note: int, velocity: int = 96, channel: int = 0) -> None:
         """Convenience helper for adding note steps."""
         self.add_step(StepEvent.note(note, velocity=velocity, channel=channel))
 
@@ -212,3 +168,19 @@ class StepSequenceFile:
         track = self._build_track()
         self._mid.tracks = [track]
         return self._mid
+
+
+class GenerateStepSequencer:
+
+    def __init__(self, generator, mods, **ssargs):
+        self._stepseq = StepSequenceFile(**ssargs)
+        self._generator = generator
+        self._mods = mods
+
+    def generate_steps(self, nbr_steps):
+        for i in range(nbr_steps):
+            self._stepseq.add_note(next(self._generator))
+        return self._stepseq
+
+
+
