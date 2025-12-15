@@ -3,16 +3,22 @@ import itertools
 
 """
 Generate notes
+
+
 """
+
+from .note import Note
+
 
 def take(n, iterable):
     """Return first n items of the iterable as a list."""
     return list(itertools.islice(iterable, n))
 
-from .note import Note
-
 class NoteGenerator:
-
+    """
+    Iterator class that generates untimed sequence of notes to feed into
+    the step sequencer
+    """
     def __init__(self):
         self._history = []
 
@@ -29,7 +35,9 @@ class NoteGenerator:
 
 
 class Arpeggiator(NoteGenerator):
-
+    """
+    Generate a repeating sequence of notes.
+    """
     def __init__(self, notelist):
         super().__init__()
         self._notelist = notelist
@@ -41,3 +49,4 @@ class Arpeggiator(NoteGenerator):
         if self.idx >= len(self._notelist):
             self.idx = 0
         return note
+

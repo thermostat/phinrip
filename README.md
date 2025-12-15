@@ -2,6 +2,26 @@
 
 Non-repeating music control
 
+
+## Step Sequence Generation
+
+The step sequence generator provides tools generate and module a
+sequence.
+
+* Library
+  * StepSequence
+  * NoteGenerator
+    * Arpeggiator
+    * MarkovProc (planned)
+  * NoteModulator
+    * ModCompose
+    * RndPred
+    * Transpose
+    
+
+
+<details>
+
 ## Proof of concept
 
 Setup components:
@@ -19,3 +39,5 @@ acsending scale.
 The simple_controller.control.js is installed as a software controller
 with sync messages turned on. mido_test.py is run, waits for syncs to
 start, then triggers a random clip each bar.
+
+</details>
