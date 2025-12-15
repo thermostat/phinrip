@@ -1,6 +1,6 @@
 
 
-import random
+import random,time
 
 # Keeping this in order is important
 NAMED_RANDOMS = [
@@ -8,6 +8,14 @@ NAMED_RANDOMS = [
     "generators",
     "modulators"
 ]
+
+SEEDMASTER = None
+
+def getSeedMaster(seed=None):
+    global SEEDMASTER
+    if SEEDMASTER == None:
+        SEEDMASTER = SeedMaster(seed)
+    return SEEDMASTER
 
 class SeedMaster:
     def __init__(self, seed=None):

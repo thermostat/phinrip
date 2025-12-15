@@ -179,7 +179,10 @@ class GenerateStepSequencer:
 
     def generate_steps(self, nbr_steps):
         for i in range(nbr_steps):
-            self._stepseq.add_note(next(self._generator))
+            note = next(self._generator)
+            for mod in self._mods:
+                note = mod.modulate(note)
+            self._stepseq.add_note(note)
         return self._stepseq
 
 

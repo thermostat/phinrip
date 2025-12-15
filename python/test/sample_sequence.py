@@ -7,6 +7,7 @@ SCALE = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5']
 
 import phinrip.step_sequence as psseq
 import phinrip.note_generator as pgen
+import phinrip.note_modulator as pmod
 import phinrip.note as pnote
 
 def sample_sequence_scale():
@@ -23,6 +24,17 @@ def sample_arp():
     file = gen.generate_steps(128)
     file.save('sample_arp.mid')
 
+
+def sample_composed():
+    notes = [ pnote.Note(x) for x in ['A2', 'C3', 'E3', 'A3'] ]
+    ngen = pgen.Arpeggiator(notes)
+    nmod = pmod.ModCompose([pmod.Transpose(-12)], [pmod.RndPred()])
+    gen = psseq.GenerateStepSequencer(ngen, [nmod])
+    file = gen.generate_steps(128)
+    file.save('sample_composed.mid')
+    
+
 if __name__ == '__main__':
     sample_sequence_scale()
     sample_arp()
+    sample_composed()

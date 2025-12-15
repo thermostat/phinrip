@@ -58,6 +58,7 @@ class Note:
         self._pitch_val = NoteName.to_midi(pitch)
         self._velocity = velocity
         self._length = length
+        self._channel = 0
 
     def __repr__(self):
         return f"Note('{self._pitch}', {self._velocity})"
@@ -67,3 +68,9 @@ class Note:
 
     def velocity(self):
         return self._velocity
+
+    def transpose(self, semi):
+        n = Note(self._pitch, self._velocity, self._length)
+        n._pitch = ''
+        n._pitch_val = self._pitch_val + semi
+        return n
