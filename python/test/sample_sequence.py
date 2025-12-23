@@ -32,9 +32,31 @@ def sample_composed():
     gen = psseq.GenerateStepSequencer(ngen, [nmod])
     file = gen.generate_steps(128)
     file.save('sample_composed.mid')
+
+def sample_markov_seq():
+    nmap = {
+        "one"  : 'A2',
+        "two"  : 'C3',
+        "three": 'E3',
+        "four" : 'G3'
+    }
+    transition = [
+        ("one", "two", 1),
+        ("two", "three", 8),
+        ("two", "one", 2),
+        ("three", "one", 8),
+        ("three", "two", 1),
+        ("three", "four", 1),
+        ("four", "one", 1)
+    ]
+    seq = pgen.MarkovSequence(nmap, transition)
+    gen = psseq.GenerateStepSequencer(seq, [])
+    file = gen.generate_steps(128)
+    file.save('sample_markov.mid')    
     
 
 if __name__ == '__main__':
     sample_sequence_scale()
     sample_arp()
     sample_composed()
+    sample_markov_seq()

@@ -27,7 +27,6 @@ class ModCompose(NoteModulator):
 
     def _should_modulate(self, note):
         res = all([pred._should_modulate(note) for pred in self._pred_lst])
-        print(res)
         return res
 
     def _do_modulate(self, note):

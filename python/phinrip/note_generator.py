@@ -8,7 +8,7 @@ Generate notes
 """
 
 from .note import Note
-
+from .markov import MarkovProcess, MarkovNode
 
 def take(n, iterable):
     """Return first n items of the iterable as a list."""
@@ -50,3 +50,33 @@ class Arpeggiator(NoteGenerator):
             self.idx = 0
         return note
 
+class MarkovSequence(NoteGenerator):
+    """
+    Generate a sequence based on a
+    Markov process
+    """
+
+    def __init__(self, nmap ,transition_map):
+        """
+        """
+        super().__init__()
+        self.nodes = {}
+        self.start_node = None
+        self.markov = MarkovProcess()
+        for k,v in nmap.items():
+            n = MarkovNode()
+            n.label=n
+            n.payload=Note(v)
+            self.nodes[k] = n
+        for from_node, to_node, w in transition_map:
+            f = self.nodes[from_node]
+            if self.start_node == None:
+                self.start_node = f
+            t = self.nodes[to_node]
+            f.add_transition(t, w)
+
+        self.markov.current_node = self.start_node
+
+    def _generate_note(self):
+        n = self.markov.step()
+        return n.payload
