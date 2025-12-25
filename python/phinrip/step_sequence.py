@@ -11,6 +11,19 @@ from typing import List, Optional
 from mido import Message, MetaMessage, MidiFile, MidiTrack, bpm2tempo
 
 from .note import Note
+from .note_generator import NoteGenerator, generator_map
+
+
+def sequence_gen_json(parsed_json):
+    gm = generator_map()
+    seq_list = parsed_json['sequence-gen']
+    objs = []
+    for seq_def in seq_list:
+        seq_cls = gm[seq_def['cls']]
+        seq_obj = seq_cls(**seq_def)
+        objs.append(seq_obj)
+    step_seq = GenerateStepSequencer(objs, [])
+    return step_seq
 
 
 class StepLength(Enum):
@@ -174,12 +187,23 @@ class GenerateStepSequencer:
 
     def __init__(self, generator, mods, **ssargs):
         self._stepseq = StepSequenceFile(**ssargs)
-        self._generator = generator
+        if type(generator) != type([]):
+            self._generators = []
+            self._current_generator = generator
+        else:
+            self._generators = generator
+            self._generators.reverse()
+            self._current_generator = self._generators.pop()
         self._mods = mods
 
     def generate_steps(self, nbr_steps):
         for i in range(nbr_steps):
-            note = next(self._generator)
+            note = next(self._current_generator)
+            if note == None and len(self._generators):
+                self._current_generator = self._generators.pop()
+                note = next(self._current_generator)
+            if note == None:
+                return self._stepseq
             for mod in self._mods:
                 note = mod.modulate(note)
             self._stepseq.add_note(note)
