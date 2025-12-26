@@ -12,6 +12,7 @@ from mido import Message, MetaMessage, MidiFile, MidiTrack, bpm2tempo
 
 from .note import Note
 from .note_generator import NoteGenerator, generator_map
+from .phrandom import getSeedMaster
 
 
 def sequence_gen_json(parsed_json):
@@ -127,6 +128,7 @@ class StepSequenceFile:
     def _build_track(self) -> MidiTrack:
         track = MidiTrack()
         track.append(MetaMessage("track_name", name=self._track_name, time=0))
+        track.append(MetaMessage("text", text=f"random_seed = {getSeedMaster().seed}", time=0))
         numerator, denominator = self._time_signature
         track.append(
             MetaMessage(

@@ -6,7 +6,8 @@ import random,time
 NAMED_RANDOMS = [
     "default",
     "generators",
-    "modulators"
+    "modulators",
+    "markov"
 ]
 
 SEEDMASTER = None
@@ -21,8 +22,8 @@ class SeedMaster:
     def __init__(self, seed=None):
         named_randoms = NAMED_RANDOMS
         if seed == None:
-            seed = time.time() + 0x71e00000
-        self.master_random = random.Random(seed)
+            self.seed = int(time.time()) + 0x71e00000
+        self.master_random = random.Random(self.seed)
         self.rng_map = {}
         for name in NAMED_RANDOMS:
             self.rng_map[name] = random.Random(self.master_random.random())

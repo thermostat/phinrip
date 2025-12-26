@@ -1,9 +1,14 @@
 
-import random
+import random,warnings
+from .phrandom import getSeedMaster
 
 
 def getMkRand():
-    return random.Random()
+    try:
+        return getSeedMaster().get('markov')
+    except:
+        warnings.warn("Not using phinrip random")
+        return random.Random()
 
 
 class MarkovNode:
