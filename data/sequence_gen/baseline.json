@@ -1,0 +1,35 @@
+
+{
+    "sequence-step-len" : "WHOLE",
+    
+    "sequence-gen" :
+
+    [
+	{
+	    "cls" : "Arpeggiator",
+	    "notelist" : ["C3", "A3", "F3"],
+	    "notecount" : 4
+	},
+	{
+	    "cls" : "MarkovSequence",
+	    "nmap"  : {
+		"one"  : "A2",
+		"two"  : "C3",
+		"three": "E3",
+		"four" : "G3"
+	    },
+	    "transition_map" : [
+		["one", "two", 1],
+		["two", "three", 8],
+		["two", "one", 2],
+		["three", "one", 8],
+		["three", "two", 1],
+		["three", "four", 1],
+		["four", "one", 1]
+	    ],
+	    "notecount" : 8
+	    
+	}
+    ]
+    
+}

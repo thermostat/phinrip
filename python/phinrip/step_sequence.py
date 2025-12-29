@@ -18,14 +18,14 @@ from .phrandom import getSeedMaster
 def sequence_gen_json(parsed_json):
     gm = generator_map()
     seq_list = parsed_json['sequence-gen']
+    seq_steplen = StepLength[parsed_json.get('sequence-step-len', 'EIGHTH')]
     objs = []
     for seq_def in seq_list:
         seq_cls = gm[seq_def['cls']]
         seq_obj = seq_cls(**seq_def)
         objs.append(seq_obj)
-    step_seq = GenerateStepSequencer(objs, [])
+    step_seq = GenerateStepSequencer(objs, [], step_length=seq_steplen)
     return step_seq
-
 
 class StepLength(Enum):
     """Enumeration of supported fixed step lengths."""
@@ -41,7 +41,6 @@ class StepLength(Enum):
         if ticks <= 0:
             raise ValueError("Step length must produce a positive tick count.")
         return ticks
-
 
 @dataclass(frozen=True)
 class StepEvent:
