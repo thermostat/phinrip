@@ -2,6 +2,27 @@
 
 Non-repeating music control
 
+## Quick Start
+
+The python scripts require the Mido package and
+the unit tests require pytest.
+
+```
+pip install mido pytest
+```
+
+From the python subdirectory, you can run pytest
+
+```
+pytest
+```
+
+You can also invoke the samples
+
+```
+python test/sample_json.py
+```
+
 
 ## Step Sequence Generation
 
